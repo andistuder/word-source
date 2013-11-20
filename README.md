@@ -38,3 +38,12 @@ It keeps analytical information of each word that it has seen.
 1. Implement LoremIpsumWordSource that pulls in words from "lorem_ipsum.txt"; include the methods described above
 2. Add callbacks on specific words e.g. every time "semper" is encountered, call those callbacks registered for "semper"
 3. implement a WordSource that uses the Twitter API (instead of loading words from a file)
+
+
+## Implementation
+
+### TDD
+
+run tests
+
+    $ rspec spec/*
