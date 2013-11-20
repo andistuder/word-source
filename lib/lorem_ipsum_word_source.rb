@@ -9,7 +9,7 @@ class LoremIpsumWordSource
     @seen_words = []
   end
   def next_word
-    @seen_words << @loaded_words.shift
+    @seen_words << @loaded_words.shift.downcase
     @seen_words.last
   end
   def count

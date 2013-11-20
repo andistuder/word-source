@@ -17,11 +17,11 @@ describe LoremIpsumWordSource do
   end
 
   describe "#next_word" do
-    it "should return the next word" do
-      subject.next_word.should == 'Lorem'
+    it "should return the next word, capitalisation normalised" do
+      subject.next_word.should == 'lorem'
     end
     it "shift through the loaded string" do
-      expected_squence = %w(Lorem ipsum dolor sit amet consectetur)
+      expected_squence = %w(lorem ipsum dolor sit amet consectetur)
       expected_squence.each do |word|
         subject.next_word.should == word
       end
@@ -31,6 +31,9 @@ describe LoremIpsumWordSource do
   describe "#top_5_words" do
     context "words seen have include more than 5 unique words" do
       it "should return an ordered list of 5 most seen words ordered asc of usage" do
+        pending
+      end
+      it "should normalise capitalisation" do
         pending
       end
     end
