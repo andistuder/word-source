@@ -2,14 +2,21 @@ require 'lorem_ipsum_word_source'
 
 describe LoremIpsumWordSource do
   subject { LoremIpsumWordSource.new }
+  let(:process_all_words) do
+    subject.loaded_words.length.times do
+      subject.next_word
+    end
+  end
 
   describe "#initialize" do
     it "should return an instance of LoremIpsumWordSorce" do
       subject.should be_an_instance_of(LoremIpsumWordSource)
     end
     it "should load lorem_ipsum.txt" do
-      #File.should_receive(:open).and_return(:file)
-      subject.loaded_words.length.should == 4946
+      file = mock('file')
+      File.should_receive(:open).with("lorem_ipsum.txt").and_return(file)
+      file.should_receive(:read).and_return("lorem ipsum")
+      subject.loaded_words.should == ['lorem', 'ipsum']
     end
     it "should be set to the beginning of the loaded string" do
       subject.seen_words.should be_empty
@@ -29,17 +36,23 @@ describe LoremIpsumWordSource do
   end
 
   describe "#top_5_words" do
-    context "words seen have include more than 5 unique words" do
-      it "should return an ordered list of 5 most seen words ordered asc of usage" do
-        pending
+    context "words seen include 5 or more unique words" do
+      it "should return an ordered list of 5 most seen words ordered desc of usage and alphabetical" do
+        File.stub_chain(:open, :read).and_return("lorem,ipsum,lorem,sit,sit,sit,consectetur,elit,zappa")
+        process_all_words
+        subject.top_5_words.should == ["sit","lorem","consectetur","elit","ipsum"]
       end
       it "should normalise capitalisation" do
-        pending
+        File.stub_chain(:open, :read).and_return("Lorem,ipsum,lorem,sit,Sit,sit,consectetur,elit")
+        process_all_words
+        subject.top_5_words.should == ["sit","lorem","consectetur","elit","ipsum"]
       end
     end
-    context "words seen have include more than 5 unique words" do
+    context "words seen include less than 5 unique words" do
       it "should include nil as placeholders for words not available" do
-        pending
+        File.stub_chain(:open, :read).and_return("Lorem,ipsum")
+        process_all_words
+        subject.top_5_words.should == ["ipsum","lorem",nil,nil,nil]
       end
     end
   end
