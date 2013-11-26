@@ -13,7 +13,7 @@ describe LoremIpsumWordSource do
       subject.should be_an_instance_of(LoremIpsumWordSource)
     end
     it "should load lorem_ipsum.txt" do
-      file = mock('file')
+      file = double('file')
       File.should_receive(:open).with("lorem_ipsum.txt").and_return(file)
       file.should_receive(:read).and_return("lorem ipsum")
       subject.loaded_words.should == ['lorem', 'ipsum']
@@ -37,35 +37,44 @@ describe LoremIpsumWordSource do
 
   describe "#top_5_words" do
     context "words seen include 5 or more unique words" do
-      it "should return an ordered list of 5 most seen words ordered desc of usage and alphabetical" do
+      it "should return an ordered list of 5 most seen words ordered desc of usage and alphabetical if same usage" do
         File.stub_chain(:open, :read).and_return("lorem,ipsum,lorem,sit,sit,sit,consectetur,elit,zappa")
         process_all_words
-        subject.top_5_words.should == ["sit","lorem","consectetur","elit","ipsum"]
+        subject.top_5_words.should == ["sit", "lorem", "consectetur", "elit", "ipsum"]
       end
       it "should normalise capitalisation" do
         File.stub_chain(:open, :read).and_return("Lorem,ipsum,lorem,sit,Sit,sit,consectetur,elit")
         process_all_words
-        subject.top_5_words.should == ["sit","lorem","consectetur","elit","ipsum"]
+        subject.top_5_words.should == ["sit", "lorem", "consectetur", "elit", "ipsum"]
       end
     end
     context "words seen include less than 5 unique words" do
       it "should include nil as placeholders for words not available" do
         File.stub_chain(:open, :read).and_return("Lorem,ipsum")
         process_all_words
-        subject.top_5_words.should == ["ipsum","lorem",nil,nil,nil]
+        subject.top_5_words.should == ["ipsum", "lorem", nil, nil, nil]
       end
     end
   end
 
   describe "#top_5_consonants" do
     context "words seen have has more than 5 consonants" do
-      it "should return an array of 5 most used consonants in the string ordered asc of usage" do
-        pending
+      it "should return ordered liast of 5 most used consonants ordered desc of usage and alphabetical if same usage" do
+        File.stub_chain(:open, :read).and_return("lorem,ipsum,lorem,sit,sit,sit")
+        process_all_words
+        subject.top_5_consonants.should == ["s", "m", "t", "l", "r"]
+      end
+      it "should normalise capitalisation" do
+        File.stub_chain(:open, :read).and_return("lorem,ipsum,lorem,sit,Sit,sit")
+        process_all_words
+        subject.top_5_consonants.should == ["s", "m", "t", "l", "r"]
       end
     end
-    context "words seen have less than 5 consonants" do
+    context "words seen include less than 5 unique consonants" do
       it "should return an array with nil as placeholders for consonants not available" do
-        pending
+        File.stub_chain(:open, :read).and_return("ipsum,sit,Sit,sit")
+        process_all_words
+        subject.top_5_consonants.should == ["s", "t", "m", "p", nil]
       end
     end
   end
