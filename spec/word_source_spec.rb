@@ -92,18 +92,13 @@ describe WordSource do
     before :each do
       subject.loaded_words = %w(lorem ipsum lorem sit sit sit)
     end
-    context "all loaded words were seen" do
-      it "should return false" do
-        subject.loaded_words.length.times do
-          subject.next_word
-        end
-        subject.run.should be_false
-      end
+    it "should return true" do
+      subject.run.should be_true
     end
-    context "not all loaded words were seen" do
-      it "should return true" do
-        subject.run.should be_true
-      end
+    it "should process all loaded words" do
+      subject.run
+      subject.loaded_words.should be_empty
+      subject.seen_words.should == {"lorem"=>2, "ipsum"=>1, "sit"=>3}
     end
   end
 end

@@ -26,7 +26,10 @@ class WordSource
   end
 
   def run
-    !loaded_words.empty?
+    until loaded_words.empty?
+      next_word
+    end
+    true
   end
 
   def top_5_words
